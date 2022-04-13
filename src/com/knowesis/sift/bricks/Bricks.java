@@ -59,7 +59,7 @@ public class Bricks {
 		_englishToRegex.put( "StringOperator", "(equals to|not equals to|contains|does not contain|starts with|ends with|does not start with|does not end with)" );
 //		_englishToRegex.put( "StringValue", "([a-zA-Z0-9_\"]+)" );
 		_englishToRegex.put( "StringValue", "(.+)" );
-		_englishToRegex.put( "NumericValue", "(-?[0-9]*\\.?[0-9])" );
+		_englishToRegex.put( "NumericValue", "(-?[0-9]*\\.?[0-9]+)" );
 		_englishToRegex.put( "openBracketToRegex", "((\\(\\s?)*)" );
 		_englishToRegex.put( "closeBracketToRegex", "\\s?((\\)\\s?)*)" );
 		_englishToRegex.put( "spacesToRegex", "\\s?" );
@@ -76,7 +76,7 @@ public class Bricks {
 			Iterator<String> iter = siftTypesObj.keySet().iterator();
 			while(iter.hasNext()) {
 				String key = iter.next();
-				_englishToRegex.put(key, "([a-zA-Z0-9_>=<! \"]+)");
+				_englishToRegex.put(key, "([a-zA-Z0-9_>=<!\\- \"]+)");
 			}
 		}
 	}
@@ -506,23 +506,65 @@ public class Bricks {
 
 		
 
+//		
+//		String bExpression = "(\n" + 
+//				"( \n" + 
+//				"( \n" + 
+//				"( Apply Sales force global policy AND \n" + 
+//				"Has imei changed ) AND \n" + 
+//				"NOT Has imei changed ) AND \n" + 
+//				"( Apply Sales force global policy AND \n" + 
+//				"( NOT Apply Sales force global policy AND \n" + 
+//				"NOT Has imei changed ) AND  )  ) \n" + 
+//				"Account Type equals to \"PRIME\" )";
+//		bExpression = format(bExpression);
+//		
+//		JsonObject jRes = brickUtil.convertToJava(bExpression);
+//
+//		System.out.println(jRes);
 		
-		String bExpression = "(\n" + 
-				"( \n" + 
-				"( \n" + 
-				"( Apply Sales force global policy AND \n" + 
-				"Has imei changed ) AND \n" + 
-				"NOT Has imei changed ) AND \n" + 
-				"( Apply Sales force global policy AND \n" + 
-				"( NOT Apply Sales force global policy AND \n" + 
-				"NOT Has imei changed ) AND  )  ) \n" + 
-				"Account Type equals to \"PRIME\" )";
+
+		
+		
+		
+		siftTypesObj = new HashMap<>();
+		siftTypesObj.put("ARPU_TYPE", "TOTAL,ONNET_VOICE,OFFNET_VOICE,ONNET_SMS,OFFNET_SMS,DATA,PPUDATA,VAS,");
+		siftTypesObj.put("BoltonType", "SocialM");
+		siftTypesObj.put("RiskCategory", "No Risk,Low Risk,Medium Risk,High Risk,");
+		siftTypesObj.put("Countries", "Kuwait,Iran,Iraq,Saudi Arabia,");
+		siftTypesObj.put("Segments", "YTH,MSS,HCN,XPT,DAN,XBL,");
+		siftTypesObj.put("percentages", "75,100,");
+		siftTypesObj.put("Gender", "M,F,");
+		siftTypesObj.put("Devices=", ",");
+		siftTypesObj.put("Nationality","India,Pakistan,Bangladesh,Nepal,Sri Lanka,");
+		siftTypesObj.put("Prepaid_Packages","add values,");
+		siftTypesObj.put("PostpaidPackages","Super_7_Package,Super_12_Talk_Package,Super_8_Package,Super_16_Package,Super_30_Package,Smart_9_Package,Contracted_BD8_Package,Contract_BD12_Package,Contract_BD16_Package,Ultimate_50GB_12_Month_Package,Super_5_Package,Super_30_12_Month_Package,Ultimate_30_Package,Ultimate_24_Packahe,Contracted_BD9_Package,Contracted_BD10_Package,Non_Contracted_BD8,");
+		siftTypesObj.put("os_name","Android OS,Proprietary,iOS,KaiOS,Symbian OS,Microsoft Windows,BlackBerry OS,Linux,");
+		siftTypesObj.put("OfferCategory","RETENTIONUPSELLUPSELL_LOCALREFILLUPLIFTCHANNELSTESTNATIONALUSAGEUPSELL_IDDROAMING_GCCROAMING_WWIDDBolton_UpsellBASICPOSTPAIDONBOARDINGACQUIRERENEWALROAMINGDeviceMazeejDevice RenewalDevice AcquisitionDevice CrossellREWARDCROSSSELLLUCKYVOLTE Call SetupLocationTechnology Upgrade5G UpgradesYouTube premiumVAS- Digital Game CardsVOLTE DEVICE UPGRADESBOLTON ADD ONLOCATION");
+		
+		
+		siftTypesObj.put("packages", "Residential Broadband Package - 10 Mbps 100GB,Residential Broadband Package - 50 Mbps 100GB Mig,Residential Broadband Package - 50 Mbps 150GB,Residential Broadband Package - 50 Mbps 70GB Mig,Residential Broadband Package - 500 Mbps 500GB,Residential Broadband Package - 100 Mbps 500GB,Super 7 Package,Super 5 Package,Super-7-Package,");
+		
+		
+		brickUtil.addSiftTypesToEngToRegex(siftTypesObj);
+		
+		
+//		brickUtil.addBrick("Number of days to credit expiry {NumericOperator} {NumericValue}", "$1 DAYS_TO_CREDIT_EXPIRY_LifeTime $3 $4 $5 $7");
+
+		brickUtil.addBrick("PostSub Current Package is {packages} type", "$1 checkPackageNameOfPostpaid( $3 )  $4 $6");
+		
+		
+//		String bExpression = "(Number of days to credit expiry equal to 1.256 )";
+		
+		String bExpression = "(PostSub Current Package is \"Super-7-Package\" type )";
+		
 		bExpression = format(bExpression);
 		
 		JsonObject jRes = brickUtil.convertToJava(bExpression);
 
 		System.out.println(jRes);
-		
+
+
 		
 	}
 }
